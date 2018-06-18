@@ -17,3 +17,7 @@ caption: {{$:/language/ControlPanel/Toolbars/PageControls/Caption}}
 </$set>
 
 </$set>
+
+<$checkbox tiddler="$:/state/topbar/extracontrols" field="text" checked="yes" unchecked="no">
+{{$:/language/ControlPanel/Toolbars/PageControls/ExtraControls}}
+</$checkbox>
