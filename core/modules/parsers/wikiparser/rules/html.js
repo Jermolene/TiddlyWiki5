@@ -47,15 +47,20 @@ exports.parse = function() {
 	this.nextTag = null;
 	// Advance the parser position to past the tag
 	this.parser.pos = tag.end;
+	// 'Optionall skip a '\' when it is followed by a linebreak. The '\' made the parseTag() function, called earlier, return null, which in the end results in this html element being wrapped in a p. Now we dont need the '\' any more.
+	this.parser.skipLinebreakEscaper();
 	// Check for an immediately following double linebreak
-	var hasLineBreak = !tag.isSelfClosing && !!$tw.utils.parseTokenRegExp(this.parser.source,this.parser.pos,/([^\S\n\r]*\r?\n(?:[^\S\n\r]*\r?\n|$))/g);
+	var twoLinebreaksAfterTagOpener = !tag.isSelfClosing && !!$tw.utils.parseTokenRegExp(this.parser.source,this.parser.pos,/([^\S\n\r]*\r?\n(?:[^\S\n\r]*\r?\n|$))/g);
 	// Set whether we're in block mode
-	tag.isBlock = this.is.block || hasLineBreak;
+	tag.isBlock = this.is.block || twoLinebreaksAfterTagOpener;
 	// Parse the body if we need to
 	if(!tag.isSelfClosing && $tw.config.htmlVoidElements.indexOf(tag.tag) === -1) {
-			var reEndString = "</" + $tw.utils.escapeRegExp(tag.tag) + ">",
-				reEnd = new RegExp("(" + reEndString + ")","mg");
-		if(hasLineBreak) {
+		var reEndString = "</" + $tw.utils.escapeRegExp(tag.tag) + ">",
+			reEnd = new RegExp("(" + reEndString + ")","mg");
+		if (tag.tag === 'pre' || tag.tag === 'code') {
+			this.parser.skipNewlines();
+		}
+		if(twoLinebreaksAfterTagOpener) {
 			tag.children = this.parser.parseBlocks(reEndString);
 		} else {
 			tag.children = this.parser.parseInlineRun(reEnd);
@@ -132,7 +137,7 @@ exports.parseTag = function(source,pos,options) {
 	pos = token.end;
 	// Check for a required line break
 	if(options.requireLineBreak) {
-		token = $tw.utils.parseTokenRegExp(source,pos,/([^\S\n\r]*\r?\n(?:[^\S\n\r]*\r?\n|$))/g);
+		token = $tw.utils.parseTokenRegExp(source,pos,/[^\S\n\r]*(?:\r?\n|$)/g);
 		if(!token) {
 			return null;
 		}
