@@ -12,6 +12,7 @@ Wraps up the markdown-js parser for use in TiddlyWiki5
 /*global $tw: false */
 "use strict";
 
+
 var markdown = require("$:/plugins/tiddlywiki/markdown/markdown.js");
 
 var CONFIG_DIALECT_TIDDLER = "$:/config/markdown/dialect",
@@ -36,6 +37,17 @@ function transformNode(node) {
 			});
 		}
 		widget.children = transformNodes(node.slice(p++));
+		// Respect code sections
+		if(widget.tag === "pre") {
+			if (node[1][0]==="code") {
+                            widget.type = "codeblock";
+                            widget.attributes = {code: {type: "string", value: node[1][1]}};
+                            delete widget.tag;
+                        }
+		}
+		if(widget.tag === "code") {
+                        widget.children = [{type: "text", text: node[1]}];
+		}
 		// Massage images into the image widget
 		if(widget.tag === "img") {
 			widget.type = "image";
@@ -62,7 +74,7 @@ function transformNode(node) {
 		}
 		return widget;
 	} else {
-		return {type: "text", text: node};
+		return {type: "raw", html: node};
 	}
 }
 

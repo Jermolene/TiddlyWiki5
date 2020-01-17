@@ -29,10 +29,11 @@ Render this widget into the DOM
 RawWidget.prototype.render = function(parent,nextSibling) {
 	this.parentDomNode = parent;
 	this.execute();
-	var div = this.document.createElement("div");
-	div.innerHTML=this.parseTreeNode.html;
-	parent.insertBefore(div,nextSibling);
-	this.domNodes.push(div);	
+	var el_name = this.parseTreeNode.isBlock ? "div" : "span";
+	var tag = this.document.createElement(el_name);
+	tag.innerHTML = this.parseTreeNode.html;
+	parent.insertBefore(tag,nextSibling);
+	this.domNodes.push(tag);
 };
 
 /*
