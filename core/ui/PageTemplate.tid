@@ -16,6 +16,8 @@ tc-page-container tc-page-view-$(storyviewTitle)$ tc-language-$(languageTitle)$
 
 <$set name="tv-show-missing-links" value={{$:/config/MissingLinks}}>
 
+<$set name="tv-auto-paragraph" value={{$:/config/AutoParagraph}}>
+
 <$set name="storyviewTitle" value={{$:/view}}>
 
 <$set name="languageTitle" value={{{ [{$:/language}get[name]] }}}>
