@@ -402,7 +402,11 @@ Syncer.prototype.handleLoginEvent = function() {
 		if(!err && !isLoggedIn) {
 			var promptInfo = $tw.passwordPrompt.createPrompt({
 				serviceName: $tw.language.getString("LoginToTiddlySpace"),
+				canCancel: true,
 				callback: function(data) {
+					if(null === data) {
+						return true; // Get rid of the password prompt
+					}
 					self.login(data.username,data.password,function(err,isLoggedIn) {
 						self.syncFromServer();
 					});
