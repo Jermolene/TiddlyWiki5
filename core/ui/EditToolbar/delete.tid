@@ -3,7 +3,20 @@ tags: $:/tags/EditToolbar $:/tags/ViewToolbar
 caption: {{$:/core/images/delete-button}} {{$:/language/Buttons/Delete/Caption}}
 description: {{$:/language/Buttons/Delete/Hint}}
 
-<$button message="tm-delete-tiddler" tooltip={{$:/language/Buttons/Delete/Hint}} aria-label={{$:/language/Buttons/Delete/Caption}} class=<<tv-config-toolbar-class>>>
+\define delete-tiddler-actions-message()
+<$action-sendmessage $message="tm-focus-selector" $param=<<tv-edit-$(fieldSelector)$-selector>>/>
+\end
+\define delete-tiddler-actions()
+<$list filter="[list[$:/StoryList]after<currentTiddler>]">
+<$set name="cssEscapedTitle" value={{{ [<currentTiddler>escapecss[]] }}}>
+<$set name="fieldSelector" value={{$:/config/AutoFocus}}>
+<<delete-tiddler-actions-message>>
+</$set>
+</$set>
+</$list>
+<$action-sendmessage $message="tm-delete-tiddler"/>
+\end
+<$button actions=<<delete-tiddler-actions>> tooltip={{$:/language/Buttons/Delete/Hint}} aria-label={{$:/language/Buttons/Delete/Caption}} class=<<tv-config-toolbar-class>>>
 <$list filter="[<tv-config-toolbar-icons>match[yes]]">
 {{$:/core/images/delete-button}}
 </$list>

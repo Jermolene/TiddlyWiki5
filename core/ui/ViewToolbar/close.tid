@@ -4,7 +4,20 @@ caption: {{$:/core/images/close-button}} {{$:/language/Buttons/Close/Caption}}
 description: {{$:/language/Buttons/Close/Hint}}
 
 \whitespace trim
-<$button message="tm-close-tiddler" tooltip={{$:/language/Buttons/Close/Hint}} aria-label={{$:/language/Buttons/Close/Caption}} class=<<tv-config-toolbar-class>>>
+\define close-tiddler-actions-message()
+<$action-sendmessage $message="tm-focus-selector" $param=<<tv-edit-$(fieldSelector)$-selector>>/>
+\end
+\define close-tiddler-actions()
+<$list filter="[list[$:/StoryList]after<currentTiddler>]">
+<$set name="cssEscapedTitle" value={{{ [<currentTiddler>escapecss[]] }}}>
+<$set name="fieldSelector" value={{$:/config/AutoFocus}}>
+<<close-tiddler-actions-message>>
+</$set>
+</$set>
+</$list>
+<$action-sendmessage $message="tm-close-tiddler"/>
+\end
+<$button actions=<<close-tiddler-actions>> tooltip={{$:/language/Buttons/Close/Hint}} aria-label={{$:/language/Buttons/Close/Caption}} class=<<tv-config-toolbar-class>>>
 <$list filter="[<tv-config-toolbar-icons>match[yes]]">
 {{$:/core/images/close-button}}
 </$list>

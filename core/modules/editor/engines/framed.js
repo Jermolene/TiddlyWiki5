@@ -86,6 +86,9 @@ function FramedEngine(options) {
 		{name: "keydown",handlerObject: this.widget,handlerMethod: "handleKeydownEvent"},
 		{name: "focus",handlerObject: this,handlerMethod: "handleFocusEvent"}
 	]);
+	$tw.utils.addEventListeners(this.iframeNode,[
+		{name: "focus",handlerObject: this,handlerMethod: "handleFocusEvent"}
+	]);
 	// Insert the element into the DOM
 	this.iframeDoc.body.appendChild(this.domNode);
 }
@@ -165,12 +168,16 @@ FramedEngine.prototype.focus  = function() {
 };
 
 /*
-Handle a focus event
+Handle a focus event on the iframe
 */
 FramedEngine.prototype.handleFocusEvent = function(event) {
 	if(this.widget.editCancelPopups) {
 		$tw.popup.cancel(0);	
 	}
+	if(this.domNode.focus && this.domNode.select) {
+		this.domNode.focus();
+		this.domNode.select();
+  }
 };
 
 /*
