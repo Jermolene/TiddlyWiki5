@@ -61,6 +61,7 @@ selection-background:
 selection-foreground:
 select-tag-background:
 select-tag-foreground:
+sidebar-background: 
 sidebar-button-foreground: <<colour foreground>>
 sidebar-controls-foreground-hover: #000000
 sidebar-controls-foreground: #aaaaaa

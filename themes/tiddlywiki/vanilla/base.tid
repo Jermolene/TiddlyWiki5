@@ -47,6 +47,12 @@ $else$
 </$reveal>
 \end
 
+\define set-sidebar-background-colour()
+<$set name="css" filter="[title[$:/state/sidebar]field:text[no]]" value="" emptyValue=<<colour sidebar-background>>>
+<<css>>
+</$set>
+\end
+
 \rules only filteredtranscludeinline transcludeinline macrodef macrocallinline macrocallblock
 
 /*
@@ -890,6 +896,7 @@ button.tc-btn-invisible.tc-remove-tag-button {
 	}
 
 	.tc-sidebar-scrollable {
+		background: <<set-sidebar-background-colour>>;
 		position: fixed;
 		top: {{$:/themes/tiddlywiki/vanilla/metrics/storytop}};
 		left: {{$:/themes/tiddlywiki/vanilla/metrics/storyright}};
