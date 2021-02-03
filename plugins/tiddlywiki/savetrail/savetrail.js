@@ -99,7 +99,19 @@ SaveTrailSyncAdaptor.prototype.getTiddlerInfo = function(tiddler) {
 /*
 Save a tiddler and invoke the callback with (err,adaptorInfo,revision)
 */
-SaveTrailSyncAdaptor.prototype.saveTiddler = function(tiddler,callback) {
+SaveTrailSyncAdaptor.prototype.saveTiddler = function(tiddler,options,callback) {
+	// Starting with 5.1.24, all syncadptor method signatures follow the node.js
+	// standard of callback as last argument. This catches the previous signature:
+	options = options || {};
+	if(!!callback && typeof callback !== "function"){
+		// First, stash any non-function third argument
+		var optionsArg = callback;
+	}
+	if(typeof options === "function"){
+		// If the second argument is a function, assign it to callback & assign or create options
+		callback = options;
+		options = optionsArg || {};
+	}
 	if($tw.wiki.checkTiddlerText(ENABLE_TIDDLER_TITLE,"yes")) {
 		var isDraft = $tw.utils.hop(tiddler.fields,"draft.of");
 		if(!isDraft || $tw.wiki.checkTiddlerText(ENABLE_DRAFTS_TIDDLER_TITLE,"yes")) {
@@ -112,14 +124,38 @@ SaveTrailSyncAdaptor.prototype.saveTiddler = function(tiddler,callback) {
 /*
 Load a tiddler and invoke the callback with (err,tiddlerFields)
 */
-SaveTrailSyncAdaptor.prototype.loadTiddler = function(title,callback) {
+SaveTrailSyncAdaptor.prototype.loadTiddler = function(title,options,callback) {
+	// Starting with 5.1.24, all syncadptor method signatures follow the node.js
+	// standard of callback as last argument. This catches the previous signature:
+	/*options = options || {};
+	if(!!callback && typeof callback !== "function"){
+		// First, stash any non-function third argument
+		var optionsArg = callback;
+	}
+	if(typeof options === "function"){
+		// If the second argument is a function, assign it to callback & assign or create options
+		callback = options;
+		options = optionsArg || {};
+	}*/
 	callback(null,null);
 };
 
 /*
 Delete a tiddler and invoke the callback with (err)
 */
-SaveTrailSyncAdaptor.prototype.deleteTiddler = function(title,callback,options) {
+SaveTrailSyncAdaptor.prototype.deleteTiddler = function(title,options,callback) {
+	// Starting with 5.1.24, all syncadptor method signatures follow the node.js
+	// standard of callback as last argument. This catches the previous signature:
+	/*options = options || {};
+	if(!!callback && typeof callback !== "function"){
+		// First, stash any non-function third argument
+		var optionsArg = callback;
+	}
+	if(typeof options === "function"){
+		// If the second argument is a function, assign it to callback & assign or create options
+		callback = options;
+		options = optionsArg || {};
+	}*/
 	callback(null);
 };
 
