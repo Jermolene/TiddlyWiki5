@@ -1,5 +1,5 @@
 {
-	"description": "Server configuration of the tw5.com edition",
+	"description": "Content for the TW plugin-library",
 	"plugins": [
 		"tiddlywiki/tiddlyweb",
 		"tiddlywiki/filesystem",
@@ -9,9 +9,9 @@
 		"tiddlywiki/vanilla",
 		"tiddlywiki/snowwhite"
 	],
-	"includeWikis": [
-		"../tw5.com"
+	"languages": [
 	],
-	"config": {
-	}
+	"includeWikis": [
+		"../pluginlibrary"
+	]
 }
