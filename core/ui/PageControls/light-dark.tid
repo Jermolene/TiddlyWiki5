@@ -1,0 +1,19 @@
+title: $:/core/ui/Buttons/light-dark
+tags: $:/tags/PageControls
+caption: {{$:/core/images/tip}} {{$:/language/Buttons/LightDark/Caption}}
+description: {{$:/language/Buttons/LightDark/Hint}}
+
+\whitespace trim
+<$button class=<<tv-config-toolbar-class>> tooltip={{$:/language/Buttons/LightDark/Hint}}>
+<$list filter="[{$:/config/AutoDarkMode}!match[yes]]">
+<$action-listops $tiddler="$:/config/DarkMode" $field="text" $subfilter="+[toggle[yes],[no]]"/>
+</$list>
+<$list filter="[<tv-config-toolbar-icons>match[yes]]">
+<$list filter="[{$:/config/AutoDarkMode}!match[yes]then{$:/config/DarkModeSetting}match[yes]] ~[{$:/config/AutoDarkMode}match[yes]then{$:/info/darkmode}match[yes]]" emptyMessage="""{{$:/core/images/tip}}""">
+{{$:/core/images/tip}}
+</$list>
+</$list>
+<$list filter="[<tv-config-toolbar-text>match[yes]]">
+<span class="tc-btn-text"><$text text={{$:/language/Buttons/LightDark/Caption}}/></span>
+</$list>
+</$button>
