@@ -1,0 +1,33 @@
+created: 20210527175240898
+modified: 20210628094122287
+tags: Macros
+title: toolbar Macro
+
+With the following macros you will generate the group of buttons, which have a specific [[tag|Tagging]], for a toolbars or the drop-down of a toolbar.
+
+;<<.var toolbar>>
+: A group/list of aligned buttons horizontally, like a toolbar.
+
+;<<.var toolbar-drop-down-list>>
+: A group of button that are aligned vertically (and each button with their caption on the right).
+
+<br>
+The buttons can be [[ordered|Order of Tagged Tiddlers]] by means of the <<.field list>> field of the tag tiddler. By default, they are ordered by creation date.
+<br>
+
+!! Parameters
+
+;tag
+: The tag that the buttons have in common.
+
+;config
+: Optionally, the config is the common prefix of config tiddlers where we can set state (show/hide) of the button. It uses to return which buttons will be displayed.
+
+;class
+: Optionally, additional [[CSS|Cascading Style Sheets]] classes for buttons. Multiple classes can be separated with spaces.
+
+;template
+: Optionally, the title of a tiddler to use as a [[template|TemplateTiddlers]] for transcluding the buttons.
+<br>
+
+[[Examples|toolbar Macro (Examples)]]
