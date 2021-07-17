@@ -443,6 +443,12 @@ exports.extractLinks = function(parseTreeRoot) {
 						links.push(value);
 					}
 				}
+				if(parseTreeNode.type === "transclude" && parseTreeNode.attributes.tiddler && parseTreeNode.attributes.tiddler.type === "string") {
+					var value = parseTreeNode.attributes.tiddler.value;
+					if(links.indexOf(value) === -1) {
+						links.push(value);
+					}
+				}
 				if(parseTreeNode.children) {
 					checkParseTree(parseTreeNode.children);
 				}
