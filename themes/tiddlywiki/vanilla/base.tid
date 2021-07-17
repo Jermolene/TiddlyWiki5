@@ -2449,6 +2449,7 @@ a.tc-tiddlylink.tc-plugin-info:hover > .tc-plugin-info-chunk > svg {
 	font-size: 0.8em;
 	line-height: 1.2;
 	margin: 2px 0 2px 0;
+	color: green;
 }
 
 .tc-plugin-info-chunk.tc-plugin-info-description div {
