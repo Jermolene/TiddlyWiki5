@@ -124,10 +124,16 @@ RevealWidget.prototype.execute = function() {
 	this.stateIndex = this.getAttribute("stateIndex");
 	this.readState();
 	// Construct the child widgets
-	var childNodes = this.isOpen ? this.parseTreeNode.children : [];
-	this.hasChildNodes = this.isOpen;
+	if(this.hasVariable("tv-static-output", "yes")) {
+		this.alwaysRender = true;
+	} else {
+		this.alwaysRender = false;
+	}
+	var childNodes = (this.alwaysRender || this.isOpen) ? this.parseTreeNode.children : [];
+	this.hasChildNodes = this.alwaysRender || this.isOpen;
 	this.makeChildWidgets(childNodes);
 };
+
 
 /*
 Read the state tiddler
@@ -220,7 +226,7 @@ RevealWidget.prototype.refresh = function(changedTiddlers) {
 		var currentlyOpen = this.isOpen;
 		this.readState();
 		if(this.isOpen !== currentlyOpen) {
-			if(this.retain === "yes") {
+			if(this.retain === "yes" || this.alwaysRender) {
 				this.updateState();
 			} else {
 				this.refreshSelf();
