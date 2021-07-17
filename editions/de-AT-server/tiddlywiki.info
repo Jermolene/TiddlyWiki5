@@ -4,7 +4,8 @@
 		"tiddlywiki/tiddlyweb",
 		"tiddlywiki/filesystem",
 		"tiddlywiki/highlight",
-		"tiddlywiki/internals"
+		"tiddlywiki/internals",
+		"tiddlywiki/railroad"
 	],
 	"themes": [
 		"tiddlywiki/vanilla",
@@ -20,5 +21,8 @@
 	],
 	"config": {
 		"default-tiddler-location": "../de-AT/tiddlers"
+	},
+	"listen": {
+		"sse-enabled":"yes"
 	}
 }
