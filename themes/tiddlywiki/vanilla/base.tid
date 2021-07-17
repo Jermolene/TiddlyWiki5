@@ -85,6 +85,7 @@ html button {
 	fill: <<colour button-foreground>>;
 	background: <<colour button-background>>;
 	border-color: <<colour button-border>>;
+	outline: none;
 }
 
 button:disabled svg {
@@ -242,6 +243,10 @@ input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
 	-webkit-appearance:none;
+}
+
+::-ms-clear {
+	display: none;
 }
 
 .tc-muted {
