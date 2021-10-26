@@ -596,7 +596,8 @@ Widget.prototype.invokeActionString = function(actions,triggeringWidget,event,va
 	actions = actions || "";
 	var parser = this.wiki.parseText("text/vnd.tiddlywiki",actions,{
 			parentWidget: this,
-			document: this.document
+			document: this.document,
+			autoParagraph: this.getVariable("tv-auto-paragraph") !== "no",			
 		}),
 		widgetNode = this.wiki.makeWidget(parser,{
 			parentWidget: this,
