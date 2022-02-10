@@ -325,6 +325,8 @@ exports.compileFilter = function(filterString) {
 			source = self.each;
 		} else if(typeof source === "object") { // Array or hashmap
 			source = self.makeTiddlerIterator(source);
+		} else if(!source.iterable) { // Deprecated method. Wrap it.
+			source = updateDeprecatedSource(source);
 		}
 		if(!widget) {
 			widget = $tw.rootWidget;
@@ -335,6 +337,28 @@ exports.compileFilter = function(filterString) {
 		});
 		return results.toArray();
 	});
+};
+
+/**For backward compatibility.
+ * Some plugins may still call filterTiddlers and pass a method as a source.
+ * That method won't be able to manage both the callback(tiddler,title)
+ * style and the lazy iterable style, so we've got to wrap it.
+ * Methods passed with .iterable = true will be recognized as true
+ * tiddler iterators.
+ */
+function updateDeprecatedSource(source) {
+	return function(callback) {
+		var titles = [],
+			ptr = 0;
+		if (callback === undefined) {
+			source(function(tiddler,title) {
+				titles.push(title);
+			});
+			return new $tw.utils.Iterator(function() { return titles[ptr++]; });
+		} else {
+			source(callback);
+		}
+	};
 };
 
 })();
