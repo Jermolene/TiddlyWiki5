@@ -1,7 +1,7 @@
 /*\
 title: $:/core/modules/filters/json-ops.js
 type: application/javascript
-module-type: filteroperator
+module-type: newfilteroperator
 
 Filter operators for JSON operations
 
@@ -15,9 +15,9 @@ Filter operators for JSON operations
 exports["jsonget"] = function(source,operator,options) {
 	var results = [];
 	source(function(tiddler,title) {
-		var data = $tw.utils.parseJSONSafe(title,title);
-		if(data) {
-			var item = getDataItemValueAsString(data,operator.operands);
+		var data = $tw.utils.filterItemToObject(title,{defaultValue: title,parseStringsAsJson: true});
+		if(data !== undefined) {
+			var item = getDataItem(data,operator.operands);
 			if(item !== undefined) {
 				results.push(item);
 			}
@@ -29,8 +29,8 @@ exports["jsonget"] = function(source,operator,options) {
 exports["jsonindexes"] = function(source,operator,options) {
 	var results = [];
 	source(function(tiddler,title) {
-		var data = $tw.utils.parseJSONSafe(title,title);
-		if(data) {
+		var data = $tw.utils.filterItemToObject(title,{defaultValue: title,parseStringsAsJson: true});
+		if(data !== undefined) {
 			var item = getDataItemKeysAsStrings(data,operator.operands);
 			if(item !== undefined) {
 				results.push.apply(results,item);
@@ -43,9 +43,9 @@ exports["jsonindexes"] = function(source,operator,options) {
 exports["jsontype"] = function(source,operator,options) {
 	var results = [];
 	source(function(tiddler,title) {
-		var data = $tw.utils.parseJSONSafe(title,title);
-		if(data) {
-			var item = getDataItemType(data,operator.operands);
+		var data = $tw.utils.filterItemToObject(title,{defaultValue: title,parseStringsAsJson: true});
+		if(data !== undefined) {
+			var item = getFilterItemType(data,operator.operands);
 			if(item !== undefined) {
 				results.push(item);
 			}
@@ -54,15 +54,19 @@ exports["jsontype"] = function(source,operator,options) {
 	return results;
 };
 
-/*
-Given a JSON data structure and an array of index strings, return an array of the string representation of the values at the end of the index chain, or "undefined" if any of the index strings are invalid
-*/
-function getDataItemValueAsString(data,indexes) {
-	// Get the item
-	var item = getDataItem(data,indexes);
-	// Return the item as a string
-	return convertDataItemValueToString(item);
-}
+exports["jsontypecheck"] = function(source,operator,options) {
+	var results = [];
+	source(function(tiddler,title) {
+		var data = $tw.utils.filterItemToObject(title,{defaultValue: title,parseStringsAsJson: false});
+		if(data !== undefined) {
+			var item = getFilterItemType(data,[]);
+			if(item === operator.operand) {
+				results.push(title);
+			}
+		}
+	});
+	return results;
+};
 
 /*
 Given a JSON data structure and an array of index strings, return an array of the string representation of the keys of the item at the end of the index chain, or "undefined" if any of the index strings are invalid
@@ -72,20 +76,6 @@ function getDataItemKeysAsStrings(data,indexes) {
 	var item = getDataItem(data,indexes);
 	// Return the item keys as a string
 	return convertDataItemKeysToStrings(item);
-}
-
-/*
-Return an array of the string representation of the values of a data item, or "undefined" if the item is undefined
-*/
-function convertDataItemValueToString(item) {
-	// Return the item as a string
-	if(item === undefined) {
-		return item;
-	}
-	if(typeof item === "object") {
-		return JSON.stringify(item);
-	}
-	return item.toString();
 }
 
 /*
@@ -115,7 +105,7 @@ function convertDataItemKeysToStrings(item) {
 	return [];
 }
 
-function getDataItemType(data,indexes) {
+function getFilterItemType(data,indexes) {
 	// Get the item
 	var item = getDataItem(data,indexes);
 	// Return the item type
@@ -150,4 +140,3 @@ function getDataItem(data,indexes) {
 }
 
 })();
-	
