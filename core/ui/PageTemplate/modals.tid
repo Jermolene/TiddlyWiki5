@@ -1,0 +1,93 @@
+list-after: 
+tags: $:/tags/PageTemplate
+title: $:/core/ui/PageTemplate/modals
+
+\whitespace trim
+
+\define close-current-modal()
+<$action-deletetiddler $tiddler=<<stateTiddler>> />
+\end
+
+\define tm-close-handler()
+<!-- Close the modal unless a different tiddler was given in the message parameter -->
+<$list filter="[<event-param>!is[blank]!match<currentTiddler>]" emptyMessage=<<close-current-modal>> >
+<$action-sendmessage $message="tm-close-tiddler" $param=<<event-param>>/>
+</$list>
+</$let>
+\end
+
+\define tm-wikimodal-handler()
+<$let stateTiddler={{{ [removeprefix[$:/state/modal/]sortan[]add[1]else[0]addprefix[$:/state/modal/]] }}}>
+<$action-setfield $tiddler=<<stateTiddler>> $index="$tiddler" $value=<<event-param>> />
+<$action-setfield $tiddler=<<stateTiddler>> $index="$template" $value=<<event-paramObject-template>> />
+<$action-setfield $tiddler=<<stateTiddler>> $index="$debug" $value=<<event-paramObject-debug>> />
+<$action-setmultiplefields $tiddler=<<stateTiddler>>
+		  				   $indexes="[enlist<list-event-paramObject>!match[template]!match[debug]]"
+						   $values="[enlist<list-event-paramObject>!match[template]!match[debug]addprefix[event-paramObject-]getvariable[]]" />
+</$let>
+\end
+
+<style>
+/* In debug mode, let the user interact with the background wiki */
+<$list filter="[prefix[$:/state/modal/]sortan[]last[]getindex[$debug]match[yes]]" variable="ignore">
+.tc-modal-wrapper {
+	position: static;
+}
+</$list>
+
+.tc-modal-backdrop {
+	opacity: 0.7;
+	transition: opacity 400ms ease-out 0s;
+}
+
+.tc-modal .tc-tiddler-controls {
+	font-weight: normal;
+	font-size: 2.35em;
+	line-height: 1.35em;
+	margin: 0;
+}
+
+.tc-modal .tc-tiddler-body {
+	clear: none;
+}
+
+.tc-modal-footer {
+	display: flex;
+}
+.tc-modal-footer > span:last-of-type {
+	flex-grow: 1;
+}
+
+</style>
+
+<!-- Do we have a list of modals to display in the state tiddler? -->
+<$reveal type="nomatch" text="" default={{{ [prefix[$:/state/modal/]first[]] }}} tag="div" class="tc-modal-wrapper">
+	<!-- use the story-list and history-list from the PageTemplate navigator -->
+	<$navigator story=<<tv-story-list>>
+				history=<<tv-history-list>>
+				openLinkFromOutsideRiver={{$:/config/Navigation/openLinkFromOutsideRiver}} >
+		<!-- Show the last opened modal -->
+		<$list filter="[prefix[$:/state/modal/]sortan[]last[]]" variable="stateTiddler">
+			<!-- Set up currentTiddler and our variables -->
+			<$tiddler tiddler={{{ [<stateTiddler>getindex[$tiddler]] }}}>
+			<$let legacyModal={{{ [<currentTiddler>!has:field[subtitle]!has:field[footer]!has:field[help]!has:field[mask-closable]!has:field[class]then[no]else[yes]] }}}>
+			<$setmultiplevariables $names="[<stateTiddler>indexes[]!prefix[$]]"
+								   $values="[<stateTiddler>indexes[]!prefix[$]] :map[<stateTiddler>getindex<currentTiddler>]">
+				<!-- We need special handling for tm-close-tiddler (and tm-wikimodal) from inside the modal -->
+				<$messagecatcher $tm-close-tiddler=<<tm-close-handler>> $tm-wikimodal=<<tm-wikimodal-handler>> >
+					<!-- Show the backdrop and make it closable on click if requested (only if not in debug mode and only checks for "yes") -->
+					<$list filter="[<stateTiddler>getindex[$debug]else[no]!match[yes]]" variable="ignore">
+						<!-- mask-closable is always active for new modals, but only when the field is set to "yes" for legacy modals -->
+						<$eventcatcher $click={{{ [<currentTiddler>get[mask-closable]match[yes]] [<legacyModal>!match[yes]] +[then<close-current-modal>] }}} selector=".tc-modal-backdrop" tag="div">
+							<div class="tc-modal-backdrop" />
+						</$eventcatcher>
+					</$list>
+					<!-- Display modal template -->
+					<$transclude tiddler={{{ [<currentTiddler>] :cascade[all[shadows+tiddlers]tag[$:/tags/ModalTemplateFilter]!is[draft]get[text]] :and[!is[blank]else{$:/core/ui/ModalTemplate}] }}} />
+			</$messagecatcher>
+			</$setmultiplevariables>
+			</$let>
+			</$tiddler>
+		</$list>
+	</$navigator>
+</$reveal>

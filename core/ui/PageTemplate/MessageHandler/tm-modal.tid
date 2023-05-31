@@ -1,0 +1,9 @@
+message: tm-wikimodal
+tags: $:/tags/PageTemplateMessageHandler
+title: $:/core/ui/PageTemplate/MessageHandler/tm-wikimodal
+
+\import [[$:/core/ui/PageTemplate/modals]]
+
+<!-- the message is not intercepted when using global keyboard shortcuts to open a modal -->
+
+<<tm-wikimodal-handler>>
