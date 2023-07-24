@@ -20,6 +20,10 @@ code-body: yes
 
 <$navigator story="$:/StoryList" history="$:/HistoryList" openLinkFromInsideRiver={{$:/config/Navigation/openLinkFromInsideRiver}} openLinkFromOutsideRiver={{$:/config/Navigation/openLinkFromOutsideRiver}} relinkOnRename={{$:/config/RelinkOnRename}}>
 
+<$genesis $type="$messagecatcher" 
+          $names="[all[shadows+tiddlers]tag[$:/tags/PageTemplateMessageHandler]!is[draft]has[message]get[message]addprefix[$]]"
+          $values="[all[shadows+tiddlers]tag[$:/tags/PageTemplateMessageHandler]!is[draft]has[message]get[text]]">
+
 <$dropzone enable=<<tv-enable-drag-and-drop>>>
 
 <$list filter="[all[shadows+tiddlers]tag[$:/tags/PageTemplate]!has[draft.of]]" variable="listItem">
@@ -29,6 +33,8 @@ code-body: yes
 </$list>
 
 </$dropzone>
+
+</$genesis>
 
 </$navigator>
 
