@@ -1,0 +1,34 @@
+created: 20240206133241785
+modified: 20240208135458608
+tags: $:/tags/Stylesheet testTOC
+title: test-styles
+type: text/vnd.tiddlywiki
+
+.tc-toc-filter> a,
+.tc-toc-filter> .tc-toc-caption {
+  color: darkviolet;
+}
+
+.tc-toc-filter> button > svg {
+  fill: darkviolet;
+}
+
+.tc-toc-include  > a,
+.tc-toc-include > .tc-toc-caption
+{
+  color: green;
+}
+
+.tc-toc-include > button > svg {
+  fill: green;
+}
+
+.tc-toc-hide> a,
+.tc-toc-hide > .tc-toc-caption
+{
+  color: red;
+}
+
+.tc-toc-hide> button > svg {
+  fill: red;
+}
