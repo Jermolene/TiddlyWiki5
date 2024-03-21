@@ -18,3 +18,10 @@ Standard/Matches: //<small><<resultCount>> matches</small>//
 System/Caption: System
 System/Hint: Search for system tiddlers
 System/Matches: //<small><<resultCount>> matches</small>//
+Variables/Caption: Variables
+Variables/Hint: Filter global variables
+Variables/Matches: //<small><<resultCount>> matches</small>//
+Variables/Search: Search Variables -
+Variables/Search/Details: Search tiddler text, tags:
+Variables/Option/Type: Type:
+Variables/Option/Sort: Sort:

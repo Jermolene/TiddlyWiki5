@@ -1,14 +1,201 @@
 title: $:/core/macros/dumpvariables
-tags: $:/tags/Macro
+tags: $:/tags/Global
 
-\define dumpvariables()
 \whitespace trim
+
+<!-- CONST string definitions -->
+\define DV-VAR-FILTER-OPTIONS() fn var proc macro widget
+\define DV-TMP-FILTER-OPTIONS() $:/temp/varSearch/options
+\define DV-TMP-SORT-OPTIONS() $:/temp/varSearch/sort
+
+\define DV-RAW-FILTER-STR() [variables:raw<_tf.dv-type>]
+\define DV-FILTER-STR() [variables<_tf.dv-type>]
+
+\define DV-TMP-SEARCH() $:/temp/varSearch
+\define DV-TMP-SEARCH-DETAILS() $:/temp/varSearch/details
+\define DV-SEARCH-STATE() $:/state/varSearch
+
+\function tf.dv-filterString() [<_tf.dv-sort>match[raw]then<DV-RAW-FILTER-STR>else<DV-FILTER-STR>]
+\function tf.dv-formattedVar() [<varname>format:variable<_tf.dv-varFormat>]
+
+<!-- =================== -->
+<!-- dumpvariables main  -->
+<!-- =================== -->
+\procedure dumpvariables(type sort subfilter:"[[]]" format)
+<!-- The following function is needed since the "format" string can contain closing brackets ")" -->
+\function _tf.dv-varFormat() [<format>!is[blank]then<format>else[$type$ $name$($params$)]]
+\function _tf.dv-type() [<type>]
+\function _tf.dv-sort() [<sort>]
 <ul>
-<$list filter="[variables[]]" variable="varname">
-<li>
-<strong><code><$text text=<<varname>>/></code></strong>:<br/>
-<$codeblock code={{{ [<varname>getvariable[]] }}}/>
-</li>
-</$list>
+	<$list filter="[subfilter<tf.dv-filterString>] +[filter<subfilter>]" variable="varname">
+		<li>
+			<code><$text text=<<tf.dv-formattedVar>>/></code><br/>
+			<% if [<tf.dv-formattedVar>prefix[\function]] %>
+				<$codeblock code={{{ [<varname>getvariable[value]] }}}/>
+			<% endif %>
+			<$codeblock code={{{ [<varname>getvariable[]] }}}/>
+		</li>
+	</$list>
 </ul>
+\end
+
+<!-- search-variables helper functions -->
+\procedure dv-toggleState()
+<$action-setfield $tiddler=<<tf.dv-varState>> text={{{ [<tf.dv-varState>get[text]] +[toggle[yes],[no]] }}}/>
+\end
+
+\procedure dv-toggleInfoState()
+<$action-setfield $tiddler=<<tf.dv-toggleInfoState>> text={{{ [<tf.dv-toggleInfoState>get[text]] +[toggle[yes],[no]] }}}/>
+<!-- Existing user modified "search text details" should be preserved. If empty use default formatted signature -->
+<$action-setfield $tiddler=<<tf.dv-detailsSearch>> text={{{ [<tf.dv-getDetailsSearchText>!is[blank]then<tf.dv-getDetailsSearchText>] :else[<varname>format:variable[$type$ $name$($params$)]] }}} />
+\end
+
+\procedure dv-clearStatesButton()
+<$button class="tc-btn-invisible tc-tiny-gap-left">
+	<!-- "search text details" should be preserved -->
+	<$action-deletetiddler $filter="[prefix<DV-SEARCH-STATE>]"/>
+	{{$:/core/images/fold-all-button}}
+</$button>
+\end
+
+\procedure dv-clearSearchButton()
+<$button class="tc-btn-invisible tc-tiny-gap-left">
+	<$action-deletetiddler $tiddler=<<tf.dv-searchText>>/>
+	{{$:/core/images/close-button}}
+</$button>
+\end
+
+\procedure dv-expandAllStatesButton()
+<$button class="tc-btn-invisible tc-tiny-gap-left">
+	<$action-setfield $tiddler=<<DV-SEARCH-STATE>> text={{{ [<tf.dv-toggleInfoState>get[text]] +[toggle[yes],[no]] }}}/>
+	<!-- only expand currently visible elements -->
+	<$list filter="[subfilter<tf.dv-filterString>] +[search::some<tf.dv-getSearchText>] +[filter<subfilter>]" variable="varname">
+		<$action-setfield $tiddler=<<tf.dv-varState>> text="yes"/>
+	</$list>
+	{{$:/core/images/unfold-all-button}}
+</$button>
+\end
+
+\procedure dv-info()
+<div class="multi-columns">
+	<$list filter="[all[tiddlers+shadows]] :filter[search:text,tags:words<tf.dv-getDetailsSearchText>] 
+		-[[$:/config/OriginalTiddlerPaths]]
+		-[[$:/HistoryList]]
+		-[[$:/StoryList]]
+		-[[$:/core]]
+		:filter[!type[application/javascript]]
+		:filter[!prefix[$:/temp/]]
+		:filter[!prefix[$:/state/]]
+		:filter[!plugin-type[plugin]]"
+	>
+		<$link class="tc-small-gap-left"/><br>
+	</$list>
+</div>
+\end
+
+\procedure dv-filterOptions()
+<style>
+.tc-dv-filterOptions [data-gap="right"] {
+	width: auto;
+	margin-right: .25em;
+}
+</style>
+<span class="tc-dv-filterOptions tc-small-gap-right">
+{{$:/language/Search/Variables/Option/Type}}
+<$list filter="[enlist<DV-VAR-FILTER-OPTIONS>]" variable="option">
+	<$checkbox tiddler=<<tf.dv-tmpTypeOptions>> listField="text" checked=<<option>>
+		class="tc-small-gap-left tc-small-gap-right" data-gap="right"
+	>
+		<<option>>
+	</$checkbox>
+</$list>|
+</span>
+\end
+
+\procedure dv-sortOptions()
+<span class="tc-dv-sortOptions">
+	{{$:/language/Search/Variables/Option/Sort}}
+	<$select tiddler=<<tf.dv-tmpSortOptions>> default="alphabetical" class="tc-tiny-gap-left">
+		<option value="alphabetical">alphabetical</option>
+		<option value="raw">raw</option>
+	</$select>
+</span>
+\end
+
+\function tf.dv-tmpTypeOptions() [<DV-TMP-FILTER-OPTIONS>] [<qualify>] +[join[/]]
+\function tf.dv-tmpSortOptions() [<DV-TMP-SORT-OPTIONS>] [<qualify>] +[join[/]]
+
+\function tf.dv-searchText() [<DV-TMP-SEARCH>] [<qualify>] +[join[/]]
+\function tf.dv-getSearchText() [<tf.dv-searchText>get[text]]
+
+\function tf.dv-detailsSearch() [<DV-TMP-SEARCH-DETAILS>] [<varname>] [<qualify>] +[join[/]]
+\function tf.dv-getDetailsSearchText() [<tf.dv-detailsSearch>get[text]]
+
+\function tf.dv-varState() [<DV-SEARCH-STATE>] [<varname>] [<qualify>] +[join[/]]
+\function tf.dv-toggleInfoState() [<DV-SEARCH-STATE>] [<varname>] +[join[/]]
+
+<!-- ============================== -->
+<!-- search-variables main function -->
+<!-- ============================== -->
+\procedure search-variables(type sort subfilter:"[[]]" format)
+<!-- The following function is needed since the "format" string can contain closing brackets ")" -->
+\function _tf.dv-varFormat() [<format>!is[blank]then<format>else[$type$ $name$($params$)]]
+\function _tf.dv-type() [<type>!is[blank]then<type>] :else[<tf.dv-tmpTypeOptions>get[text]]
+\function _tf.dv-sort() [<sort>!is[blank]then<sort>] :else[<tf.dv-tmpSortOptions>get[text]] :else[[alphabetical]]
+
+<% if [<type>is[blank]] %>
+	<<dv-filterOptions>>
+<% endif %>
+<% if [<sort>is[blank]] %>
+	<<dv-sortOptions>>
+<% endif %>
+<div class="tc-dv-search-input">
+	<% if [<thisTiddler>!match[$:/AdvancedSearch]] %>
+		<$text text={{$:/language/Search/Variables/Search}}/>
+		<%if [<sort>!is[blank]] %><code class="tc-small-gap">sort:<<_tf.dv-sort>></code><%endif%>
+		<%if [<type>!is[blank]] %><code class="tc-small-gap">type:<<_tf.dv-type>></code><%endif%>
+	<% endif %>
+	<$edit-text tiddler=<<tf.dv-searchText>> tag=input/> <<dv-clearSearchButton>>
+	<% if [<DV-SEARCH-STATE>get[text]match[yes]] %>
+		<<dv-clearStatesButton>>
+	<% else %>
+		<<dv-expandAllStatesButton>>
+	<% endif %>
+</div>
+<$list filter="[subfilter<tf.dv-filterString>] +[search::some<tf.dv-getSearchText>] +[filter<subfilter>]" variable="varname">
+<div class="tc-var-item">
+	<$button actions=<<dv-toggleState>> class="tc-small-gap-left tc-btn-invisible">
+		<% if [<tf.dv-varState>get[text]match[yes]] %>
+			{{$:/core/images/down-arrow}}
+		<% else %>
+			{{$:/core/images/right-arrow}}
+		<% endif %>
+		<code class="tc-small-gap-right"><$text text=<<tf.dv-formattedVar>>/></code>
+		<% if [<tf.dv-formattedVar>prefix[\function]] %>
+			<span class="tc-tiny-gap-right"><$text text={{{ [<varname>format:variable[$firstLine$]] }}}/></span>
+		<% endif %>
+	</$button>
+
+	<% if [<tf.dv-varState>get[text]match[yes]] %>
+		<$button actions=<<dv-toggleInfoState>> class="tc-btn-invisible tc-small-gap-left">
+			<% if [<tf.dv-toggleInfoState>get[text]match[yes]] %>
+				{{$:/core/images/down-arrow}}
+			<% else %>
+				{{$:/core/images/right-arrow}}
+			<% endif %>
+		</$button>
+		<% if [<tf.dv-toggleInfoState>get[text]match[yes]] %>
+			<div class="tc-labeled-input-wrapper">
+				<span class="tc-fixed-label tc-align-right">{{$:/language/Search/Variables/Search/Details}}</span>
+				<$edit-text tiddler=<<tf.dv-detailsSearch>> tag=input class="tc-fluid-input tc-small-gap-left"/>
+			</div>
+			<<dv-info>>
+		<% endif %>
+		<% if [<varname>prefix[\function]] %>
+			<$codeblock code={{{ [<varname>getvariable[value]] }}}/>
+		<% endif %>
+		<$codeblock code={{{ [<varname>getvariable[]] }}}/>
+	<% endif %>
+</div>
+</$list>
 \end
