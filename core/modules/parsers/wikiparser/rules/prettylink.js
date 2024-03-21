@@ -23,8 +23,8 @@ exports.types = {inline: true};
 
 exports.init = function(parser) {
 	this.parser = parser;
-	// Regexp to match
-	this.matchRegExp = /\[\[(.*?)(?:\|(.*?))?\]\]/mg;
+	// Regexp to match `[[Alias|Title^blockId]]`, the `Alias|` and `^blockId` are optional.
+	this.matchRegExp = /\[\[(.*?)(?:\|(.*?)?)?(?:\^([^|\s^]+)?)?\]\]/mg;
 };
 
 exports.parse = function() {
@@ -32,8 +32,13 @@ exports.parse = function() {
 	this.parser.pos = this.matchRegExp.lastIndex;
 	// Process the link
 	var text = this.match[1],
-		link = this.match[2] || text;
+		link = this.match[2] || text,
+		anchor = this.match[3] || "";
 	if($tw.utils.isLinkExternal(link)) {
+		// add back the part after `^` to the ext link, if it happen to has one.
+		if(anchor) {
+			link = link + "^" + anchor;
+		}
 		return [{
 			type: "element",
 			tag: "a",
@@ -51,7 +56,8 @@ exports.parse = function() {
 		return [{
 			type: "link",
 			attributes: {
-				to: {type: "string", value: link}
+				to: {type: "string", value: link},
+				toAnchor: {type: "string", value: anchor},
 			},
 			children: [{
 				type: "text", text: text
