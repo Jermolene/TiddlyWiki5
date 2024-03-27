@@ -20,7 +20,7 @@ exports.synchronous = true;
 
 // Default story and history lists
 var PAGE_TITLE_TITLE = "$:/core/wiki/title";
-var PAGE_STYLESHEET_TITLE = "$:/core/ui/PageStylesheet";
+var PAGE_STYLESHEET_TITLE = "$:/core/ui/RootStylesheet";
 var PAGE_TEMPLATE_TITLE = "$:/core/ui/RootTemplate";
 
 // Time (in ms) that we defer refreshing changes to draft tiddlers
@@ -38,23 +38,69 @@ exports.startup = function() {
 			document.title = $tw.titleContainer.textContent;
 		}
 	});
-	// Set up the styles
-	$tw.styleWidgetNode = $tw.wiki.makeTranscludeWidget(PAGE_STYLESHEET_TITLE,{document: $tw.fakeDocument});
-	$tw.styleContainer = $tw.fakeDocument.createElement("style");
-	$tw.styleWidgetNode.render($tw.styleContainer,null);
-	$tw.styleWidgetNode.assignedStyles = $tw.styleContainer.textContent;
-	$tw.styleElement = document.createElement("style");
-	$tw.styleElement.innerHTML = $tw.styleWidgetNode.assignedStyles;
-	document.head.insertBefore($tw.styleElement,document.head.firstChild);
-	$tw.wiki.addEventListener("change",$tw.perf.report("styleRefresh",function(changes) {
-		if($tw.styleWidgetNode.refresh(changes,$tw.styleContainer,null)) {
-			var newStyles = $tw.styleContainer.textContent;
-			if(newStyles !== $tw.styleWidgetNode.assignedStyles) {
-				$tw.styleWidgetNode.assignedStyles = newStyles;
-				$tw.styleElement.innerHTML = $tw.styleWidgetNode.assignedStyles;
+
+	function setStylesheets() {
+		// Set up the styles for each stylesheet Tiddler
+		for(var i=0; i<$tw.stylesheetTiddlers.length; i++) {
+			var styleWidgetNode = $tw.wiki.makeTranscludeWidget(PAGE_STYLESHEET_TITLE,{document: $tw.fakeDocument, variables: {
+				stylesheet: $tw.wiki.getTiddlerText($tw.stylesheetTiddlers[i])
+			}});
+			$tw.styleWidgetNodes.push(styleWidgetNode);
+			var styleContainer = $tw.fakeDocument.createElement("style");
+			$tw.styleContainers.push(styleContainer);
+			styleWidgetNode.render(styleContainer,null);
+			styleWidgetNode.assignedStyles = styleContainer.textContent;
+			var styleElement = document.createElement("style");
+			$tw.styleElements.push(styleElement);
+			styleElement.innerHTML = styleWidgetNode.assignedStyles;
+			document.head.insertBefore(styleElement,document.head.firstChild);
+		}
+	}
+
+	function getStylesheets() {
+		// Get our stylesheets in reversed order
+		return $tw.wiki.filterTiddlers("[all[shadows+tiddlers]tag[$:/tags/Stylesheet]!has[draft.of]]").reverse();
+	}
+
+	function detectStylesheetRefresh(changes) {
+		for(var i=0; i<$tw.stylesheetTiddlers.length; i++) {
+			if($tw.excludedStylesheets.indexOf($tw.stylesheetTiddlers[i]) === -1) {
+				if($tw.styleWidgetNodes[i].refresh(changes,$tw.styleContainers[i],null)) {
+					var newStyles = $tw.styleContainers[i].textContent;
+					if(newStyles !== $tw.styleWidgetNodes[i].assignedStyles) {
+						$tw.styleWidgetNodes[i].assignedStyles = newStyles;
+						$tw.styleElements[i].innerHTML = $tw.styleWidgetNodes[i].assignedStyles;
+					}
+				}
 			}
 		}
-	}));
+	}
+
+	// Get our stylesheets
+	$tw.stylesheetTiddlers = getStylesheets();
+	$tw.excludedStylesheets = $tw.wiki.getTiddlersWithTag("$:/tags/Stylesheet/Static");
+	$tw.styleWidgetNodes = [];
+	$tw.styleContainers = [];
+	$tw.styleElements = [];
+	setStylesheets();
+
+	$tw.wiki.addEventListener("change",function(changes) {
+		var stylesheetTiddlers = getStylesheets();
+		$tw.excludedStylesheets = $tw.wiki.getTiddlersWithTag("$:/tags/Stylesheet/Static");
+		if(!$tw.utils.arraysEqual(stylesheetTiddlers,$tw.stylesheetTiddlers) || $tw.utils.hopArray(changes,stylesheetTiddlers)) {
+			for(var i=0; i<$tw.stylesheetTiddlers.length; i++) {
+				document.head.removeChild($tw.styleElements[i]);
+			}
+			$tw.stylesheetTiddlers = stylesheetTiddlers;
+			$tw.styleWidgetNodes = [];
+			$tw.styleContainers = [];
+			$tw.styleElements = [];
+			setStylesheets();
+		}
+		$tw.perf.report("styleRefresh",function() {
+			detectStylesheetRefresh(changes);
+		})();
+	});
 	// Display the $:/core/ui/PageTemplate tiddler to kick off the display
 	$tw.perf.report("mainRender",function() {
 		$tw.pageWidgetNode = $tw.wiki.makeTranscludeWidget(PAGE_TEMPLATE_TITLE,{document: document, parentWidget: $tw.rootWidget, recursionMarker: "no"});
