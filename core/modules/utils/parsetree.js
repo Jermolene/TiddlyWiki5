@@ -123,4 +123,32 @@ exports.getParseTreeText = function getParseTreeText(tree) {
 	return output.join("");
 };
 
+/*
+Utility to get the (similarly but not 1:1 equal) original wikitext of a parse tree node or array of nodes
+*/
+exports.serializeParseTree = function serializeParseTree(tree, tiddlerType) {
+	var output = [];
+	if($tw.utils.isArray(tree)) {
+		$tw.utils.each(tree,function(node) {
+			output.push(serializeParseTree(node));
+		});
+	} else {
+		if(tree.type === "text") {
+			output.push(tree.text);
+		} else {
+			var Parser = $tw.wiki.getParser(tiddlerType);
+			var Rule = Parser.prototype.blockRuleClasses[tree.rule] ||
+				Parser.prototype.inlineRuleClasses[tree.rule] ||
+				Parser.prototype.pragmaRuleClasses[tree.rule];
+			if(Rule && Rule.prototype.serialize) {
+				output.push(Rule.prototype.serialize(tree));
+			}
+		}
+		if(tree.children) {
+			return serializeParseTree(tree.children);
+		}
+	}
+	return output.join("");
+};
+
 })();
