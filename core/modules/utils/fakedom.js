@@ -6,7 +6,7 @@ module-type: global
 A barebones implementation of DOM interfaces needed by the rendering mechanism.
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -326,4 +326,3 @@ var document = {
 
 exports.fakeDocument = document;
 
-})();

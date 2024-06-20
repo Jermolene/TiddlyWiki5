@@ -6,7 +6,7 @@ module-type: widget
 Droppable widget
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -185,5 +185,3 @@ DroppableWidget.prototype.refresh = function(changedTiddlers) {
 };
 
 exports.droppable = DroppableWidget;
-
-})();

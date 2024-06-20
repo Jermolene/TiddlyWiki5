@@ -6,7 +6,7 @@ module-type: widget
 Link widget
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -226,5 +226,3 @@ LinkWidget.prototype.refresh = function(changedTiddlers) {
 
 exports.link = LinkWidget;
 
-})();
-	

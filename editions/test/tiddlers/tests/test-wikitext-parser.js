@@ -6,7 +6,7 @@ tags: [[$:/tags/test-spec]]
 Tests for wikitext parser
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -326,4 +326,3 @@ describe("WikiText parser tests", function() {
 
 });
 
-})();

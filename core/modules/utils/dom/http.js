@@ -6,7 +6,7 @@ module-type: utils
 HTTP support
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -349,4 +349,3 @@ exports.setQueryStringParameter = function(url,paramName,paramValue) {
 	}
 };
 
-})();

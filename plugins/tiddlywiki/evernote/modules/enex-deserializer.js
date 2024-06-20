@@ -8,7 +8,7 @@ ENEX file deserializer
 For details see: https://blog.evernote.com/tech/2013/08/08/evernote-export-format-enex/
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -47,7 +47,7 @@ exports["application/enex+xml"] = function(text,fields) {
 			try {
 				// may error if content is not valid XML
 				contentNode =	new DOMParser().parseFromString(contentText,"application/xml").querySelector("en-note") || contentNode;
-			} catch(e) {
+			} catch (e) {
 				// ignore
 			}
 		}
@@ -136,4 +136,18 @@ function fixAttachmentReference(contentNode, md5Hash, mimeType, name) {
 }
 
 
-})();
+function fixAttachmentReference(contentNode, md5Hash, mimeType, name) {
+	if(!contentNode) return;
+	var mediaNode = contentNode.querySelector('en-media[hash="' + md5Hash + '"]');
+	if(!name) {
+		throw new Error("name is empty for resource hash" + md5Hash);
+	}
+	if(!mediaNode) return;
+	if(mimeType.indexOf("image/") === 0) {
+		// find en-media node, replace with image syntax
+		mediaNode.parentNode.replaceChild($tw.utils.domMaker("p", {text: "[img["+ name + "]]"}), mediaNode);
+	} else {
+		// For other than image attachments, we make a link to the tiddler
+		mediaNode.parentNode.replaceChild($tw.utils.domMaker("p", {text: "[["+ name + "]]"}), mediaNode);
+	}
+}

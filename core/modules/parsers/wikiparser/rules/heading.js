@@ -6,7 +6,7 @@ module-type: wikirule
 Wiki text block rule for headings
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -45,4 +45,3 @@ exports.parse = function() {
 		children: tree
 	}];
 };
-})();

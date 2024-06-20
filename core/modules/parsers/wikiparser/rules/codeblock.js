@@ -12,7 +12,7 @@ Wiki text rule for code blocks. For example:
 ```
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -57,4 +57,3 @@ exports.parse = function() {
 	}];
 };
 
-})();

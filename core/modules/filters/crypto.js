@@ -6,7 +6,7 @@ module-type: filteroperator
 Filter operators for cryptography, using the Stanford JavaScript library
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -21,4 +21,3 @@ exports.sha256 = function(source,operator,options) {
 	return results;
 };
 
-})();

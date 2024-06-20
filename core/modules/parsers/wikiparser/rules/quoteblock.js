@@ -6,7 +6,7 @@ module-type: wikirule
 Wiki text rule for quote blocks.
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -73,4 +73,3 @@ exports.parse = function() {
 	}];
 };
 
-})();

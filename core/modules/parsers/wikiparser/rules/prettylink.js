@@ -12,7 +12,7 @@ Wiki text inline rule for pretty links. For example:
 ```
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -67,4 +67,3 @@ exports.parse = function() {
 	}
 };
 
-})();
