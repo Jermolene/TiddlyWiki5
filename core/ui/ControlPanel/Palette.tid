@@ -2,20 +2,28 @@ title: $:/core/ui/ControlPanel/Palette
 tags: $:/tags/ControlPanel/Appearance
 caption: {{$:/language/ControlPanel/Palette/Caption}}
 
-\define lingo-base() $:/language/ControlPanel/Palette/
+\procedure lingo-base() $:/language/ControlPanel/Palette/
+\whitespace trim
 
-{{$:/snippets/paletteswitcher}}
+\procedure paletteEditorButton()
+<% if [{$:/state/ShowPaletteEditor}!match[yes]] %>
+	<$button set="$:/state/ShowPaletteEditor" setTo="yes"><<lingo ShowEditor/Caption>></$button>
+<% else %>
+	<$button set="$:/state/ShowPaletteEditor" setTo="no"><<lingo HideEditor/Caption>></$button>
+	{{$:/PaletteManager}}
+<% endif %>
+\end
 
-<$reveal type="nomatch" state="$:/state/ShowPaletteEditor" text="yes">
+{{$:/core/ui/ControlPanel/Palette/DarkLightConfig}}
 
-<$button set="$:/state/ShowPaletteEditor" setTo="yes"><<lingo ShowEditor/Caption>></$button>
+<% if  [{$:/config/palette/enable-light-dark-detection}match[yes]] %>
+	<<paletteEditorButton>>
+<% else %>
 
-</$reveal>
+!! <<lingo "Switcher/Heading">>
 
-<$reveal type="match" state="$:/state/ShowPaletteEditor" text="yes">
+	{{$:/snippets/paletteswitcher}}
 
-<$button set="$:/state/ShowPaletteEditor" setTo="no"><<lingo HideEditor/Caption>></$button>
-{{$:/PaletteManager}}
+	<<paletteEditorButton>>
 
-</$reveal>
-
+<% endif %>
