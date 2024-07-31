@@ -6,7 +6,7 @@ module-type: global
 The syncer tracks changes to the store and synchronises them to a remote data store represented as a "sync adaptor"
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -704,4 +704,3 @@ SyncFromServerTask.prototype.run = function(callback) {
 
 exports.Syncer = Syncer;
 
-})();

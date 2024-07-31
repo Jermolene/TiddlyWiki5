@@ -6,7 +6,7 @@ module-type: macro
 Macro to output tiddlers matching a filter to CSV
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -76,4 +76,3 @@ function quoteAndEscape(value) {
 	return "\"" + value.replace(/"/mg,"\"\"") + "\"";
 }
 
-})();

@@ -6,7 +6,7 @@ module-type: widget
 Dynannotate widget
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -434,4 +434,3 @@ DynannotateWidget.prototype.refresh = function(changedTiddlers) {
 
 exports.dynannotate = DynannotateWidget;
 
-})();

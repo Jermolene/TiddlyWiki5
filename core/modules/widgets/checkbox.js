@@ -6,7 +6,7 @@ module-type: widget
 Checkbox widget
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -340,6 +340,3 @@ CheckboxWidget.prototype.refresh = function(changedTiddlers) {
 };
 
 exports.checkbox = CheckboxWidget;
-
-})();
-	

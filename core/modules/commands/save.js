@@ -6,7 +6,6 @@ module-type: command
 Saves individual tiddlers in their raw text or binary format to the specified files
 
 \*/
-(function(){
 
 	/*jslint node: true, browser: true */
 	/*global $tw: false */

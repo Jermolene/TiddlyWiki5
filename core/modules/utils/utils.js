@@ -6,7 +6,7 @@ module-type: utils
 Various static utility functions.
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -1037,4 +1037,3 @@ exports.makeCompareFunction = function(type,options) {
 	return (types[type] || types[options.defaultType] || types.number);
 };
 
-})();

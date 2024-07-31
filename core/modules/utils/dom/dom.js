@@ -6,7 +6,7 @@ module-type: utils
 Various static DOM-related utility functions.
 
 \*/
-(function(){
+
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
@@ -309,8 +309,8 @@ Collect DOM variables
 */
 exports.collectDOMVariables = function(selectedNode,domNode,event) {
 	var variables = {},
-	    selectedNodeRect,
-	    domNodeRect;
+		selectedNodeRect,
+		domNodeRect;
 	if(selectedNode) {
 		$tw.utils.each(selectedNode.attributes,function(attribute) {
 			variables["dom-" + attribute.name] = attribute.value.toString();
@@ -389,4 +389,3 @@ exports.querySelectorAllSafe = function(selector,baseElement) {
 	}
 };
 
-})();
