@@ -1,0 +1,44 @@
+created: 20231101120147664
+modified: 20240303191156570
+tags: Features
+title: DarkLightChangeActions
+type: text/vnd.tiddlywiki
+
+!! ~ControlPanel Palette
+
+Manual dark / light mode handling can be activated in the $:/ControlPanel ''-> Appearence -> Palette'' tab or with the checkbox and configuration below.
+
+<$let tv-adjust-heading-level="1">
+
+{{$:/core/ui/ControlPanel/Palette/DarkLightConfig}}
+</$let>
+
+!! Palette Modes Detection
+
+<<.tip """Be aware that the browser setting can be independent from the OS setting.<br>
+If the browser settings are set to "System theme - auto" for ~FireFox or "System default" for Chrome-like browsers, the OS setting will be shown. """>>
+
+* Actions tagged <<tag $:/tags/StartupAction/Browser>> are executed when the wiki is started. More info can be found at StartupActions and examples here.
+* <<.from-version "5.3.4">> Actions tagged <<tag "$:/tags/DarkLightChangeActions">> are executed whenever the browser or OS dark / light setting is changed.
+
+!!! Variable
+
+<<.from-version "5.3.4">>
+
+The following variable is defined for actions tagged: `$:/tags/DarkLightChangeActions`
+
+| Variables | Description |h
+|`dark-mode` |`yes` or `no` depending on the browser or OS setting |
+
+!!! Examples
+
+Examples, how to handle dark / light events can be found at: [[DarkLightChangeActions (Examples)]]
+
+
+Currently the following tiddlers are tagged ~$:/tags/DarkLightChangeActions:
+
+<<list-links filter:"[tag[$:/tags/DarkLightChangeActions]]" emptyMessage:"none">>
+
+Currently the following tiddlers are tagged ~$:/tags/StartupAction/Browser:
+
+<<list-links filter:"[tag[$:/tags/StartupAction/Browser]]" emptyMessage:"none">>
