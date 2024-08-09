@@ -83,4 +83,16 @@ exports.parse = function() {
 	}
 };
 
+exports.serialize = function (tree, serialize) {
+	var serialized = '$$$'; // Extract the type from the tree node (assuming it's stored in a specific attribute)
+	if(tree.attributes && tree.attributes.type) {
+		serialized += tree.attributes.type.value;
+	}
+	serialized += '\n'; // Serialize the children of the block
+	serialized += serialize(tree.children); 	// Close the serialized string
+	serialized += "\n$$$";
+	// Return the complete serialized string
+	return serialized;
+};
+
 })();
